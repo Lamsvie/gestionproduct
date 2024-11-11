@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+
+import Loginform from "./components/loginform";
+import Navigation from "./components/navigation";
+import Listproduit from "./components/pages/produit/listproduit";
+import UserList from './components/pages/users/userList';
+import { useState } from 'react';
+import { getAuthenticated } from './lib/authApi';
+import PrivateRoutes from './lib/privateRoutes';
+import PublicRoutes from './lib/publicRoutes';
+
 
 function App() {
+
+  const [isAuthenticated, setIsAuthenticated] = useState(getAuthenticated)
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+
+    <div className='fixed h-full w-full '>
+      {isAuthenticated && <Navigation />}
+
+      <Routes>
+
+        <Route element={<PublicRoutes isAuthenticated={isAuthenticated} />}>
+          <Route path='/login' element={<Loginform setIsAuthenticate={setIsAuthenticated} />} />
+        </Route>
+        <Route element={<PrivateRoutes isAuthenticated={isAuthenticated} />}>
+          <Route exact path='/' element={<Listproduit />} />
+          <Route path='/user' element={<UserList />} />
+        </Route>
+
+
+      </Routes>
     </div>
+
   );
 }
 
